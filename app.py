@@ -10,8 +10,68 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 from flask import render_template
+from flask_sqlalchemy import SQLAlchemy
+from mysrc.config import db_name
+
+# ================================================================
+"""
+Интеграция с базами данных
+
+Flask поддерживает SQL и NoSQL. Для простых приложений популярным выбором является SQLite из-за его легкости и неприхотливости в настройке.
+SQLAlchemy - это ORM (Object-Relational Mapping) библиотека для Python, которая облегчает работу с базами данных SQL. В Flask ее можно использовать для упрощения операций с базой данных.
+Пример подключения к базе данных с использованием SQLAlchemy:
+"""
 
 app = Flask("Flask_project")
+# local DB connect
+app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql:///[{db_name}]"
+db = SQLAlchemy(app)
+
+"""
+Создание БД моделей
+
+Модели в SQLAlchemy представляют таблицы баз данных. Они позволяют взаимодействовать с данными на более высоком уровне абстракции.
+Пример создания модели:
+"""
+
+
+class User(db.Model):
+    """TODO: вынести этот блок как в MVC?"""
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f"<User {self.username}>"
+
+
+"""
+Операции CRUD
+
+CRUD означает Создание (Create), Чтение (Read), Обновление (Update), Удаление (Delete). SQLAlchemy упрощает выполнение этих операций.
+Пример создания нового пользователя:
+"""
+# line 59 -- RuntimeError: Working outside of application context.
+# TODO: SQLAlchemy app без Flask
+# new_user = User(username="Tester", email="test@test.to")
+# db.session.add(new_user)
+# db.session.commit()
+
+"""
+Пример чтения пользователя:
+"""
+# line 65 -- RuntimeError: Working outside of application context.
+# User.query.filter_by(username="newuser").first()
+
+"""
+Миграции
+
+Для управления изменениями в структуре базы данных можно использовать расширение Flask-Migrate. Оно облегчает процесс создания и применения миграций.
+"""
+
+
+# ================================================================
 
 
 @app.route("/")
